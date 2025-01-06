@@ -96,6 +96,7 @@ if (pid == 0) /*process enfant*/
 		exit(EXIT_FAILURE);
 		}
 	}
-	else /*process parent*/
-		wait(&status);
+
+if (pid != 0 && pid != 1) /*process parent*/
+	wait(&status);
 }
