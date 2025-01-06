@@ -14,7 +14,7 @@
 int main(void)
 {
 char *line = NULL; /*pointeur pour stocker l'entrée utilisateur*/
-char *argv[];
+char *argv[2];
 size_t len = 0; /*taille de la mémoire alloué à line*/
 ssize_t nread; /*nombre de caractère lus*/
 pid_t pid;
@@ -45,7 +45,9 @@ while (1) /*boucle infinie pour garder le shell actif*/
 
 	if (pid == 0) /*process enfant*/
 		{
-		*argv[] = {line, NULL}; /*argument à passer à execve*/
+		argv[0] = line; /*commande a executer*/
+		argv[1] = NULL; /*fin de l'argument*/
+
 		if (execve(line, argv, NULL) == -1)
 			{
 			perror(line); /*affiche une erreur si execve echoue*/
