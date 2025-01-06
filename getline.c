@@ -66,6 +66,7 @@ void execute_command(char *line, char **argv)
 {
 pid_t pid;
 int status;
+char *cmd_argv[2];
 
 pid = fork();
 if (pid == -1)
@@ -76,9 +77,18 @@ if (pid == -1)
 
 if (pid == 0) /*process enfant*/
 	{
-	if (access(line, X_OK) ==1) /*verifie si la commande est executable*/
+	if (access(line, X_OK) == - 1) /*verifie la commande*/
 		{
-		fprintf(stderr, "%s: %s: permission or cmd not found\n", argv[0], line);
+		fprintf(stderr, "%s: permission or cmd not found\n", argv[0]);
+		exit(EXIT_FAILURE);
+		}
+
+	cmd_argv[0] = line;
+	cmd_argv[1] = NULL;
+
+	if (execve(line, cmd_argv, NULL) == -1)
+		{
+		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
 		exit(EXIT_FAILURE);
 		}
 	}
