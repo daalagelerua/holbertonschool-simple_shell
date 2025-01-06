@@ -43,7 +43,7 @@ while (1) /*boucle infinie pour garder le shell actif*/
 	execute_command(line, argv); /*execute la commande*/
 	}
 free(line); /*libère la mémoire*/
-return(0);
+return (0);
 }
 
 /**
@@ -77,7 +77,7 @@ if (pid == -1)
 
 if (pid == 0) /*process enfant*/
 	{
-	if (access(line, X_OK) == - 1) /*verifie la commande*/
+	if (access(line, X_OK) == -1) /*verifie la commande*/
 		{
 		fprintf(stderr, "%s: permission or cmd not found\n", argv[0]);
 		exit(EXIT_FAILURE);
