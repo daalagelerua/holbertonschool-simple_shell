@@ -83,7 +83,7 @@ if (pid == 0) /*process enfant*/
 	{
 	if (access(line, X_OK) == -1) /*verifie la commande*/
 		{
-		fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
+		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
 		exit(EXIT_FAILURE);
 		}
 
@@ -92,7 +92,7 @@ if (pid == 0) /*process enfant*/
 
 	if (execve(line, cmd_argv, environ) == -1)
 		{
-		fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
+		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
 		exit(EXIT_FAILURE);
 		}
 	}
