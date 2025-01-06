@@ -82,7 +82,6 @@ if (pid == -1)
 
 if (pid == 0) /*process enfant*/
 	{
-	printf("execution commande: %s\n", line);
 	if (access(line, X_OK) == -1) /*verifie la commande*/
 		{
 		fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
