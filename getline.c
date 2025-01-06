@@ -11,14 +11,16 @@
 * Return: 0
 */
 
-int main(void)
+int main(int argc, char **argv)
 {
 char *line = NULL; /*pointeur pour stocker l'entrée utilisateur*/
-char *argv[2];
+char *cmd_argv[2];
 size_t len = 0; /*taille de la mémoire alloué à line*/
 ssize_t nread; /*nombre de caractère lus*/
 pid_t pid;
 int status;
+
+(void)argc; /*argc n'est pas utilisé donc on le mute*/
 
 while (1) /*boucle infinie pour garder le shell actif*/
 	{
@@ -45,12 +47,13 @@ while (1) /*boucle infinie pour garder le shell actif*/
 
 	if (pid == 0) /*process enfant*/
 		{
-		argv[0] = line; /*commande a executer*/
-		argv[1] = NULL; /*fin de l'argument*/
+		cmd_argv[0] = line; /*commande a executer*/
+		cmd_argv[1] = NULL; /*fin de l'argument*/
 
-		if (execve(line, argv, NULL) == -1)
+		if (execve(line, cmd_argv, NULL) == -1)
 			{
-			perror(line); /*affiche une erreur si execve echoue*/
+			/*affiche erreur avec nom du prog*/
+			fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
 			exit(EXIT_FAILURE); /*quitte le process enfant*/
 			}
 		}
