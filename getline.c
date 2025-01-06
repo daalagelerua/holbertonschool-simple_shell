@@ -7,7 +7,8 @@
 
 /**
 * main - boucle principale et affichage du prompt
-*
+* @argc: compteur d'argument (non utilisé ici)
+* @argv: vecteur d'argument (contien nom du programme ou arguments
 * Return: 0
 */
 
