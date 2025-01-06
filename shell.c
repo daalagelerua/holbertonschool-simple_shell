@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+extern char **environ;
+
 /*protos*/
 void display_prompt(void);
 void execute_command(char *line, char **argv);
@@ -68,6 +70,9 @@ pid_t pid;
 int status;
 char *cmd_argv[2];
 
+if (line[0] == '\0')
+	return;
+
 pid = fork();
 if (pid == -1)
 	{
@@ -77,6 +82,7 @@ if (pid == -1)
 
 if (pid == 0) /*process enfant*/
 	{
+	printf("execution commande: %s\n", line);
 	if (access(line, X_OK) == -1) /*verifie la commande*/
 		{
 		fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
@@ -86,7 +92,7 @@ if (pid == 0) /*process enfant*/
 	cmd_argv[0] = line;
 	cmd_argv[1] = NULL;
 
-	if (execve(line, cmd_argv, NULL) == -1)
+	if (execve(line, cmd_argv, environ) == -1)
 		{
 		fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
 		exit(EXIT_FAILURE);
