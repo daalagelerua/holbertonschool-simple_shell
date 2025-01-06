@@ -52,7 +52,7 @@ return (0);
 
 void display_prompt(void)
 {
-printf("cisfun$ ");
+printf("($) ");
 fflush(stdout); /*assure que le prompt est affiché immediatement*/
 }
 
@@ -79,7 +79,7 @@ if (pid == 0) /*process enfant*/
 	{
 	if (access(line, X_OK) == -1) /*verifie la commande*/
 		{
-		fprintf(stderr, "%s: permission or cmd not found\n", argv[0]);
+		fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
 		exit(EXIT_FAILURE);
 		}
 
@@ -88,7 +88,7 @@ if (pid == 0) /*process enfant*/
 
 	if (execve(line, cmd_argv, NULL) == -1)
 		{
-		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
+		fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
 		exit(EXIT_FAILURE);
 		}
 	}
