@@ -55,7 +55,6 @@ return (0);
 void display_prompt(void)
 {
 printf("($) ");
-fflush(stdout); /*assure que le prompt est affiché immediatement*/
 }
 
 /**
