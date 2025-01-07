@@ -51,53 +51,47 @@ void execute_command(char *line, char **argv)
 {
     pid_t pid;
     int status;
-    char *cmd_argv[100];  // Tableau pour les arguments de la commande
+    char *cmd_argv[100];
     char *full_command;
     int i = 0;
     char *token;
 
-    if (line[0] == '\0')  // Si la ligne est vide, on ne fait rien
+    if (line[0] == '\0')
         return;
 
-    // Tokenize la ligne en commandes et arguments
+    // Tokenize the line into command and arguments
     token = strtok(line, " ");
     while (token != NULL)
     {
-        cmd_argv[i++] = token;  // Ajouter l'argument au tableau
+        cmd_argv[i++] = token;
         token = strtok(NULL, " ");
     }
-    cmd_argv[i] = NULL;  // Terminer le tableau des arguments avec NULL
+    cmd_argv[i] = NULL;
 
-    // Vérifier si la commande existe dans le PATH avant de fork
-    full_command = find_command_in_path(cmd_argv[0]);  // Trouver le chemin complet de la commande
-
-    if (full_command == NULL)
-    {
-        // Si la commande n'existe pas, afficher un message d'erreur et ne pas appeler fork()
-        fprintf(stderr, "%s: command not found\n", cmd_argv[0]);
-        return;  // Sortir de la fonction sans fork()
-    }
-
-    // Fork pour exécuter la commande
     pid = fork();
     if (pid == -1)
     {
-        perror("Erreur fork");
-        return;  // Erreur fork
+        perror("Error forking");
+        return;
     }
 
-    if (pid == 0)  /* Processus enfant */
+    if (pid == 0) // Child process
     {
-        // Vérifier que la commande peut être exécutée
+        full_command = find_command_in_path(cmd_argv[0]);
+        if (full_command == NULL)
+        {
+            fprintf(stderr, "./hsh: %s: command not found\n", cmd_argv[0]);
+            exit(EXIT_FAILURE);
+        }
+
         if (execve(full_command, cmd_argv, environ) == -1)
         {
-            perror("Execve");
-            exit(EXIT_FAILURE);  // En cas d'échec d'exécution
+            perror("Execve failed");
+            exit(EXIT_FAILURE);
         }
     }
-    else if (pid > 0)  /* Processus parent */
+    else if (pid > 0) // Parent process
     {
-        // Attendre la fin du processus enfant
         wait(&status);
     }
 }
