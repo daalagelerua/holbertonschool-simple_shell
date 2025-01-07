@@ -10,6 +10,7 @@ extern char **environ;
 /*protos*/
 void display_prompt(void);
 void execute_command(char *line, char **argv);
+int handle_exit(char **cmd_argv, char **argv);
 
 /**
 * main - boucle principale et affichage du prompt
@@ -24,6 +25,10 @@ char *line = NULL; /*pointeur pour stocker l'entrée utilisateur*/
 size_t len = 0; /*taille de la mémoire alloué à line*/
 ssize_t nread; /*nombre de caractère lus*/
 int is_interactive = isatty(STDIN_FILENO); /*verifie si entrée interactive*/
+char *cmd_argv[100];
+int i = 0;
+char *token;
+int exit_code;
 
 (void)argc; /*argc n'est pas utilisé donc on le mute*/
 
@@ -42,13 +47,59 @@ while (1) /*boucle infinie pour garder le shell actif*/
 
 	line[nread - 1] = '\0'; /*supprime le \n en fin de commande*/
 
-	if (strcmp(line, "exit") == 0)
+	token = strtok(line, " ");
+	while (token != NULL)
+		{
+		cmd_argv[i++] = token;
+		token = strtok(NULL, " ");
+		}
+	cmd_argv[i] = NULL; /*terminer le tableau avec NULL*/
+
+	if (cmd_argv[0] == NULL) /*si aucune commande continuer*/
+		continue;
+
+	if (handle_exit(cmd_argv, argv) != -1)
 		break;
 
-	execute_command(line, argv); /*execute la commande*/
+	execute_command(cmd_argv, argv);
 	}
-free(line); /*libère la mémoire*/
-return (0);
+free(line);
+return (exit_code);
+}
+
+/**
+* handle_exit - gere la commande exit
+* @cmd_argv: array d'args
+* @argv: vecteur d'arg du main
+* Return: -1 if exit is not found or exit code
+*/
+
+int handle_exit(char **cmd_argv, char **argv)
+{
+int exit_code;
+char *endptr;
+
+	if (strcmp(cmd_argv[0], "exit") != 0) /*verifie si cmd is exit*/
+		return (-1);
+
+		if (cmd_argv[1]) /*si code d'etat fourni*/
+			{
+			exit_code = strtol(cmd_argv[1], &endptr, 10)
+			if (*endptr != '\0') /*si l'arg n'est pas un entier valide*/
+				{
+				fprintf(stderr, "%s: exit: %s: numeric argument required\n",
+				argv[0], cmd_argv[1]);
+				return (2); /*code erreur pour arg invalide*/
+				}
+			if (cmd_argv[2]) /*si trop d'args*/
+				{
+				fprintf(stderr, %s: exit: too many arguments\n",argv[0]);
+				return (-1); /*ne pas quitter*/
+				}
+			}
+		else
+			exit_code = 0;
+		exit(exit_code;
 }
 
 /**
