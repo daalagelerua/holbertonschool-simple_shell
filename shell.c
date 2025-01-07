@@ -9,7 +9,7 @@ extern char **environ;
 
 /*protos*/
 void display_prompt(void);
-void execute_command(char *line, char **argv);
+void execute_command(char **cmd_argv, char **argv);
 int handle_exit(char **cmd_argv, char **argv);
 int parse_exit_code(const char *arg, char **argv);
 
@@ -81,20 +81,20 @@ int exit_code;
 	if (strcmp(cmd_argv[0], "exit") != 0) /*verifie si cmd is exit*/
 		return (-1);
 
-		if (cmd_argv[1]) /*si code d'etat fourni*/
+	if (cmd_argv[1]) /*si code d'etat fourni*/
+		{
+		exit_code = parse_exit_code(cmd_argv[1], argv);
+		if (exit_code == -1) /*erreur de parsing*/
+			return (2); /*code erreur pour arg invalide*/
+		if (cmd_argv[2]) /*si trop d'args*/
 			{
-			exit_code = parse_exit_code(cmd_argv[1], argv)
-			if (exit_code == -1) /*erreur de parsing*/
-				return (2); /*code erreur pour arg invalide*/
-			if (cmd_argv[2]) /*si trop d'args*/
-				{
-				fprintf(stderr, %s: exit: too many arguments\n",argv[0]);
-				return (-1); /*ne pas quitter*/
-				}
+			fprintf(stderr, "%s: exit: too many arguments\n",argv[0]);
+			return (-1); /*ne pas quitter*/
 			}
-		else
-			exit_code = 0;
-		exit(exit_code);
+		}
+	else
+		exit_code = 0;
+	exit(exit_code);
 }
 
 /**
@@ -137,14 +137,10 @@ fflush(stdout); /*assure que le prompt est affiché immedatemment*/
 * @argv: vecteur d'argument de la fonction main
 */
 
-void execute_command(char *line, char **argv)
+void execute_command(char **cmd_argv, char **argv)
 {
 pid_t pid;
 int status;
-char *cmd_argv[2];
-
-if (line[0] == '\0')
-	return;
 
 pid = fork();
 if (pid == -1)
@@ -155,22 +151,13 @@ if (pid == -1)
 
 if (pid == 0) /*process enfant*/
 	{
-	if (access(line, X_OK) == -1) /*verifie la commande*/
+	if (execve(cmd_argv[0], cmd_argv, NULL) == -1) /*verifie la commande*/
 		{
 		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
 		exit(EXIT_FAILURE);
 		}
 
-	cmd_argv[0] = line;
-	cmd_argv[1] = NULL;
-
-	if (execve(line, cmd_argv, environ) == -1)
-		{
-		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
-		exit(EXIT_FAILURE);
-		}
 	}
-
-if (pid < 0) /*process parent*/
+else /*process parent*/
 	wait(&status);
 }
