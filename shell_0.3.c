@@ -6,6 +6,9 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include "shell.h"
+#define PROMPT "($) "
+#define DELIM " \n"
+
 
 extern char **environ;
 char *find_command_in_path(char *command);
@@ -45,79 +48,63 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void execute_command(char *line, char **argv) {
+void execute_command(char *line, char **argv)
+{
     pid_t pid;
     int status;
     char *cmd_argv[100];
     char *full_command;
     int i = 0;
     char *token;
-    char *input_file = NULL;
-    char *output_file = NULL;
-    int input_redirect = 0;
-    int output_redirect = 0;
 
+    // Tokenisation de la ligne d'entrée
     if (line[0] == '\0')
         return;
 
     token = strtok(line, " ");
-    while (token != NULL) {
-        if (strcmp(token, "<") == 0) {
-            input_redirect = 1;
-            token = strtok(NULL, " ");
-            input_file = token;
-        } else if (strcmp(token, ">") == 0) {
-            output_redirect = 1;
-            token = strtok(NULL, " ");
-            output_file = token;
-        } else {
-            cmd_argv[i++] = token;
-        }
+    while (token != NULL)
+    {
+        cmd_argv[i++] = token;
         token = strtok(NULL, " ");
     }
     cmd_argv[i] = NULL;
 
     if (cmd_argv[0] == NULL)
-        return;
+        return;  // Commande vide, on ne fait rien
 
     pid = fork();
-    if (pid == -1) {
+    if (pid == -1)
+    {
         perror("Erreur fork");
         return;
     }
 
-    if (pid == 0) {
-        if (input_redirect) {
-            int fd = open(input_file, O_RDONLY);
-            if (fd == -1) {
-                perror("Erreur d'ouverture du fichier d'entrée");
+    if (pid == 0)  // Processus fils
+    {
+        // Vérifier si la commande a un chemin absolu (contient un '/')
+        if (strchr(cmd_argv[0], '/') != NULL)
+        {
+            full_command = strdup(cmd_argv[0]);  // Utiliser le chemin complet directement
+        }
+        else  // Sinon, chercher la commande dans le PATH
+        {
+            full_command = find_command_in_path(cmd_argv[0]);
+            if (full_command == NULL)
+            {
+                fprintf(stderr, "%s: command not found\n", cmd_argv[0]);
                 exit(EXIT_FAILURE);
             }
-            dup2(fd, STDIN_FILENO);
-            close(fd);
         }
 
-        if (output_redirect) {
-            int fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            if (fd == -1) {
-                perror("Erreur d'ouverture du fichier de sortie");
-                exit(EXIT_FAILURE);
-            }
-            dup2(fd, STDOUT_FILENO);
-            close(fd);
-        }
-
-        full_command = find_command_in_path(cmd_argv[0]);
-        if (full_command == NULL) {
-            fprintf(stderr, "%s: command not found\n", cmd_argv[0]);
-            exit(EXIT_FAILURE);
-        }
-
-        if (execve(full_command, cmd_argv, environ) == -1) {
+        // Exécuter la commande avec execve
+        if (execve(full_command, cmd_argv, environ) == -1)
+        {
             perror("Execve échoué");
             exit(EXIT_FAILURE);
         }
-    } else if (pid > 0) {
-        wait(&status);
+    }
+    else if (pid > 0)  // Processus parent
+    {
+        wait(&status);  // Attendre la fin du processus fils
     }
 }
