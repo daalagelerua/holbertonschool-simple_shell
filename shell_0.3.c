@@ -47,8 +47,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void execute_command(char *line, char **argv)
-{
+void execute_command(char *line, char **argv) {
     pid_t pid;
     int status;
     char *cmd_argv[100];
@@ -56,42 +55,40 @@ void execute_command(char *line, char **argv)
     int i = 0;
     char *token;
 
-    if (line[0] == '\0')
+    if (line[0] == '\0') /* Si la ligne est vide, on ne fait rien */
         return;
 
-    // Tokenize the line into command and arguments
+    /* Tokenize la ligne en commandes et arguments */
     token = strtok(line, " ");
-    while (token != NULL)
-    {
+    while (token != NULL) {
         cmd_argv[i++] = token;
         token = strtok(NULL, " ");
     }
     cmd_argv[i] = NULL;
 
+    if (cmd_argv[0] == NULL) /* Si la commande est vide, on sort */
+        return;
+
+    /* Création du processus fils */
     pid = fork();
-    if (pid == -1)
-    {
-        perror("Error forking");
+    if (pid == -1) {
+        perror("Erreur fork");
         return;
     }
 
-    if (pid == 0) // Child process
-    {
-        full_command = find_command_in_path(cmd_argv[0]);
-        if (full_command == NULL)
-        {
-            fprintf(stderr, "./hsh: %s: command not found\n", cmd_argv[0]);
+    if (pid == 0) { /* Processus fils */
+        full_command = find_command_in_path(cmd_argv[0]); // Utiliser la fonction find_command_in_path
+        if (full_command == NULL) {
+            fprintf(stderr, "%s: command not found\n", cmd_argv[0]);
             exit(EXIT_FAILURE);
         }
 
-        if (execve(full_command, cmd_argv, environ) == -1)
-        {
-            perror("Execve failed");
+        /* Vérifie si execve réussit */
+        if (execve(full_command, cmd_argv, environ) == -1) {
+            perror("Execve échoué");
             exit(EXIT_FAILURE);
         }
-    }
-    else if (pid > 0) // Parent process
-    {
-        wait(&status);
+    } else if (pid > 0) { /* Processus parent */
+        wait(&status); /* Attend que le fils termine */
     }
 }
