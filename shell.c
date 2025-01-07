@@ -1,17 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <shell.h>
 
 extern char **environ;
-
-/*protos*/
-void display_prompt(void);
-void execute_command(char **cmd_argv, char **argv);
-int handle_exit(char **cmd_argv, char **argv);
-int parse_exit_code(const char *arg, char **argv);
 
 /**
 * main - boucle principale et affichage du prompt
@@ -129,35 +118,4 @@ void display_prompt(void)
 {
 printf("($) ");
 fflush(stdout); /*assure que le prompt est affiché immedatemment*/
-}
-
-/**
-* execute_command - crée les forks et execute les commandes
-* @line: entrée utilisateur
-* @argv: vecteur d'argument de la fonction main
-*/
-
-void execute_command(char **cmd_argv, char **argv)
-{
-pid_t pid;
-int status;
-
-pid = fork();
-if (pid == -1)
-	{
-	perror("erreur fork");
-	return;
-	}
-
-if (pid == 0) /*process enfant*/
-	{
-	if (execve(cmd_argv[0], cmd_argv, NULL) == -1) /*verifie la commande*/
-		{
-		fprintf(stderr, "%s: No such file or directory\n", argv[0]);
-		exit(EXIT_FAILURE);
-		}
-
-	}
-else /*process parent*/
-	wait(&status);
 }
