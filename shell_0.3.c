@@ -67,11 +67,12 @@ void execute_command(char *line, char **argv) {
     full_command = find_command_in_path(cmd_argv[0]); // Utiliser la fonction isolée
 
     if (full_command == NULL) {
+        // Si la commande n'existe pas, afficher un message d'erreur et ne pas appeler fork()
         fprintf(stderr, "%s: command not found\n", cmd_argv[0]);
-        return;  // Ne pas fork si la commande n'existe pas
+        return;
     }
 
-    // Si la commande existe, fork pour l'exécuter
+    // Si la commande existe, on peut fork()
     pid = fork();
     if (pid == -1) {
         perror("Erreur fork");
