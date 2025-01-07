@@ -23,17 +23,20 @@ int main(int argc, char **argv)
 char *line = NULL; /*pointeur pour stocker l'entrée utilisateur*/
 size_t len = 0; /*taille de la mémoire alloué à line*/
 ssize_t nread; /*nombre de caractère lus*/
+int is_interactive = isatty(STDIN_FILENO); /*verifie si entrée interactive*/
 
 (void)argc; /*argc n'est pas utilisé donc on le mute*/
 
 while (1) /*boucle infinie pour garder le shell actif*/
 	{
-	display_prompt(); /*affiche le prompt*/
+	if (is_interactive)
+		display_prompt(); /*affiche le prompt seulement en mode interactif*/
 	nread = getline(&line, &len, stdin); /*lit l'entrée utilisateur*/
 
 	if (nread == -1) /*verifie si EOF ou erreur*/
 		{
-		printf("\n"); /*affiche une nouvelle ligne avant de quitter*/
+		if (is_interactive)
+			printf("\n"); /*affiche une nouvelle ligne avant de quitter*/
 		break;
 		}
 
@@ -55,6 +58,7 @@ return (0);
 void display_prompt(void)
 {
 printf("($) ");
+fflush(stdout); /*assure que le prompt est affiché immedatemment*/
 }
 
 /**
