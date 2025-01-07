@@ -17,6 +17,15 @@ void execute_command(char *line, char **argv);
 * Return: 0
 */
 
+#include "shell.h"
+
+/**
+* main - boucle principale et affichage du prompt
+* @argc: compteur d'argument (non utilisé ici)
+* @argv: vecteur d'argument (contien nom du programme ou arguments
+* Return: 0
+*/
+
 int main(int argc, char **argv)
 {
 char *line = NULL; /*pointeur pour stocker l'entrée utilisateur*/
