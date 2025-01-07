@@ -5,18 +5,17 @@
 #include "shell.h"
 
 char *find_command_in_path(char *command) {
-    if (command[0] == '/') {  // Si la commande commence par un '/', c'est un chemin absolu
+    if (command[0] == '/') {
         if (access(command, X_OK) == 0) {
-            return command;  // La commande est déjà complète, on vérifie juste l'accès
+            return command;
         }
-        return NULL;  // Si la commande n'est pas trouvée, on retourne NULL
+        return NULL;
     }
 
-    // Sinon, on cherche dans les répertoires du PATH
     char *path = getenv("PATH");
     char *path_copy = strdup(path);
     char *dir = strtok(path_copy, ":");
-    char *full_path = malloc(1024);  // Allocation dynamique pour éviter le problème du 'static'
+    char *full_path = malloc(1024);
 
     if (!full_path) {
         perror("Erreur d'allocation mémoire");
