@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+extern char **environ;
+
 void display_prompt(void);
 void execute_command(char **cmd_argv, char **argv);
 int handle_exit(char **cmd_argv, char **argv);

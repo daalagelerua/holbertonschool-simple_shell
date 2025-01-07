@@ -1,6 +1,4 @@
-#include <shell.h>
-
-extern char **environ;
+#include "shell.h"
 
 /**
 * main - boucle principale et affichage du prompt
