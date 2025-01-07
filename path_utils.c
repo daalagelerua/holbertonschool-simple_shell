@@ -16,10 +16,16 @@ char *find_command_in_path(char *command) {
     char *path = getenv("PATH");
     char *path_copy = strdup(path);
     char *dir = strtok(path_copy, ":");
-    static char full_path[1024];
+    char *full_path = malloc(1024);  // Allocation dynamique pour éviter le problème du 'static'
+
+    if (!full_path) {
+        perror("Erreur d'allocation mémoire");
+        free(path_copy);
+        return NULL;
+    }
 
     while (dir != NULL) {
-        snprintf(full_path, sizeof(full_path), "%s/%s", dir, command);
+        snprintf(full_path, 1024, "%s/%s", dir, command);
         if (access(full_path, X_OK) == 0) {
             free(path_copy);
             return full_path;
@@ -28,5 +34,6 @@ char *find_command_in_path(char *command) {
     }
 
     free(path_copy);
+    free(full_path);
     return NULL;
 }
