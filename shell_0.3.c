@@ -63,27 +63,27 @@ void execute_command(char *line, char **argv) {
     }
     cmd_argv[i] = NULL;
 
- // Vérification si la commande existe avant de fork
-    full_command = find_command_in_path(cmd_argv[0]);
+    // Vérifier si la commande existe dans le PATH avant de fork
+    full_command = find_command_in_path(cmd_argv[0]); // Utiliser la fonction isolée
+
     if (full_command == NULL) {
-        // Si la commande n'existe pas, on affiche un message d'erreur
         fprintf(stderr, "%s: command not found\n", cmd_argv[0]);
-        return;  // Ne pas faire de fork si la commande n'existe pas
+        return;  // Ne pas fork si la commande n'existe pas
     }
 
-    // Fork si la commande est trouvée
+    // Si la commande existe, fork pour l'exécuter
     pid = fork();
     if (pid == -1) {
         perror("Erreur fork");
         return;
     }
 
-    if (pid == 0) { /* Processus enfant */
+    if (pid == 0) {  /* Processus enfant */
         if (execve(full_command, cmd_argv, environ) == -1) {
             perror("Execve");
             exit(EXIT_FAILURE);
         }
-    } else if (pid > 0) { /* Processus parent */
+    } else if (pid > 0) {  /* Processus parent */
         wait(&status);
     }
 }
