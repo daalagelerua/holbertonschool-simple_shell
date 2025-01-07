@@ -11,6 +11,7 @@ extern char **environ;
 void display_prompt(void);
 void execute_command(char *line, char **argv);
 int handle_exit(char **cmd_argv, char **argv);
+int parse_exit_code(const char *arg, char **argv);
 
 /**
 * main - boucle principale et affichage du prompt
@@ -28,7 +29,6 @@ int is_interactive = isatty(STDIN_FILENO); /*verifie si entrée interactive*/
 char *cmd_argv[100];
 int i = 0;
 char *token;
-int exit_code;
 
 (void)argc; /*argc n'est pas utilisé donc on le mute*/
 
@@ -64,7 +64,7 @@ while (1) /*boucle infinie pour garder le shell actif*/
 	execute_command(cmd_argv, argv);
 	}
 free(line);
-return (exit_code);
+return (0);
 }
 
 /**
@@ -77,20 +77,15 @@ return (exit_code);
 int handle_exit(char **cmd_argv, char **argv)
 {
 int exit_code;
-char *endptr;
 
 	if (strcmp(cmd_argv[0], "exit") != 0) /*verifie si cmd is exit*/
 		return (-1);
 
 		if (cmd_argv[1]) /*si code d'etat fourni*/
 			{
-			exit_code = strtol(cmd_argv[1], &endptr, 10)
-			if (*endptr != '\0') /*si l'arg n'est pas un entier valide*/
-				{
-				fprintf(stderr, "%s: exit: %s: numeric argument required\n",
-				argv[0], cmd_argv[1]);
+			exit_code = parse_exit_code(cmd_argv[1], argv)
+			if (exit_code == -1) /*erreur de parsing*/
 				return (2); /*code erreur pour arg invalide*/
-				}
 			if (cmd_argv[2]) /*si trop d'args*/
 				{
 				fprintf(stderr, %s: exit: too many arguments\n",argv[0]);
@@ -99,7 +94,31 @@ char *endptr;
 			}
 		else
 			exit_code = 0;
-		exit(exit_code;
+		exit(exit_code);
+}
+
+/**
+* parse_exit_code - parses the exit code arg
+* @arg: argument to parse
+* @argv: vecteur d'arg du main
+* Return: parsed exit code, or -1 if invalid
+*/
+
+int parse_exit_code(const char *arg, char **argv)
+{
+int exit_code = 0;
+int i;
+
+for (i = 0; arg[i] != '\0'; i++)
+	{
+	if (arg[i] < '0' || arg[i] > '9')
+		{
+		fprintf(stderr, "%s: exit: %s: numeric arg required\n", argv[0], arg);
+		return (-1);
+		}
+	exit_code = exit_code * 10 + (arg[i] - '0');
+	}
+return (exit_code);
 }
 
 /**
