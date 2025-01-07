@@ -101,6 +101,6 @@ if (pid == 0) /*process enfant*/
 		}
 	}
 
-if (pid != 0 && pid != 1) /*process parent*/
+if (pid < 0) /*process parent*/
 	wait(&status);
 }
