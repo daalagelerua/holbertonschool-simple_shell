@@ -14,5 +14,5 @@ void execute_command(char *command, char **argv);
 int handle_exit(char **cmd_argv, char **argv);
 int parse_exit_code(const char *arg, char **argv);
 char *find_command_in_path(char *command);
-
+extern char **environ;
 #endif
