@@ -14,5 +14,6 @@ extern char **environ;
 void display_prompt(void);
 void execute_command(char **cmd_argv, char **argv);
 char *find_command_path(char *command);
-void handle_exit(char *line);
+void handle_exit(char **cmd_argv);
+
 #endif
