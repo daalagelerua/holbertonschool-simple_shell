@@ -13,14 +13,14 @@ char *find_command_in_path(char *command)
     if (!path)
         return NULL;
 
-    path_copy = strdup(path);  // Crée une copie du PATH
+    path_copy = strdup(path);  
     if (!path_copy)
         return NULL;
 
     dir = strtok(path_copy, ":");
     while (dir != NULL)
     {
-        len = strlen(dir) + strlen(command) + 2;  // Calcul de la longueur totale
+        len = strlen(dir) + strlen(command) + 2;
         full_path = malloc(len);
         if (!full_path)
         {
@@ -28,18 +28,18 @@ char *find_command_in_path(char *command)
             return NULL;
         }
 
-        snprintf(full_path, len, "%s/%s", dir, command);  // Crée le chemin complet
+        snprintf(full_path, len, "%s/%s", dir, command);
 
-        if (access(full_path, X_OK) == 0)  // Vérifie si la commande est exécutable
+        if (access(full_path, X_OK) == 0)  
         {
             free(path_copy);
-            return full_path;  // Retourne le chemin complet de la commande
+            return full_path;
         }
 
         free(full_path);
-        dir = strtok(NULL, ":");  // Passe au répertoire suivant dans le PATH
+        dir = strtok(NULL, ":");
     }
 
     free(path_copy);
-    return NULL;  // Retourne NULL si la commande n'est pas trouvée
+    return NULL;
 }
