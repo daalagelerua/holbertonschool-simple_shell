@@ -39,6 +39,7 @@ void execute_command(char **cmd_argv, char **argv)
 
 	if (pid == 0) /* Processus enfant */
 	{
+	printf("%s\n%s\n", cmd_path, cmd_argv[0]);
 		if (execve(cmd_path, cmd_argv, environ) == -1)
 		{
 			fprintf(stderr, "%s: 1: %s: not found\n", argv[0], cmd_argv[0]);
