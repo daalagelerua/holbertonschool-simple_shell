@@ -49,14 +49,8 @@ free(line);
 return (0);
 }
 /**
- * display_prompt - Displays the shell prompt
- *
- * Description: This function prints the shell prompt (`$ `) to the standard
- * output. It ensures that the prompt is immediately displayed by flushing
- * the output buffer.
- *
- * Return: void
- */
+* display_prompt - Displays the shell prompt
+*/
 void display_prompt(void)
 {
 printf("$ ");
@@ -64,18 +58,13 @@ fflush(stdout);
 }
 
 /**
- * execute_command - Executes a given command using a child process
- * @command: The command to execute (full path required)
- * @argv: The argument vector of the main function
- *
- * Description: This function creates a child process using `fork`. The child
- * process executes the specified command using `execve`, while the parent
- * process waits for the child to finish. If the command is not found or
- * fails to execute, an error message is printed.
- *
- * Return: void
- */
-
+* execute_command - Executes a command with no arguments
+* @command: The command to execute (absolute path required)
+* @argv: Argument vector from main
+*
+* Description: This function creates a child process to execute the command.
+* If the command is not found or fails to execute, it prints an error message.
+*/
 void execute_command(char *command, char **argv)
 {
 pid_t pid;
@@ -83,7 +72,7 @@ int status;
 pid = fork();
 if (pid == -1)
 {
-perror("Erreur fork");
+perror("Error:");
 return;
 }
 if (pid == 0)
