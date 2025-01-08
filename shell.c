@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-/* Declaration of the external environment variable */
 extern char **environ;
 
 void display_prompt(void);
@@ -91,14 +90,14 @@ void execute_command(char *command, char **argv)
 
     if (pid == 0)
     {
-        /* Create an array for command arguments */
+        /* Execute command using execvp to search in PATH */
         char *cmd_argv[2];
         cmd_argv[0] = command;
         cmd_argv[1] = NULL;
 
-        if (execve(command, cmd_argv, environ) == -1)
+        if (execvp(command, cmd_argv) == -1)
         {
-            fprintf(stderr, "%s: %s: No such file or directory\n", argv[0], command);
+            fprintf(stderr, "%s: %s: command not found\n", argv[0], command);
             exit(EXIT_FAILURE);
         }
     }
