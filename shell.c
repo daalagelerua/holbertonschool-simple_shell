@@ -1,119 +1,145 @@
 #include "shell.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+extern char **environ; /* Accès aux variables d'environnement */
+void handle_env(void);
 
 /**
-* main - boucle principale et affichage du prompt
-* @argc: compteur d'argument (non utilisé ici)
-* @argv: vecteur d'argument (contien nom du programme ou arguments
-* Return: 0
-*/
-
+ * main - boucle principale et affichage du prompt
+ * @argc: compteur d'arguments (non utilisé ici)
+ * @argv: vecteur d'arguments (contient nom du programme ou arguments)
+ * Return: 0
+ */
 int main(int argc, char **argv)
 {
-char *line = NULL; /*pointeur pour stocker l'entrée utilisateur*/
-size_t len = 0; /*taille de la mémoire alloué à line*/
-ssize_t nread; /*nombre de caractère lus*/
-int is_interactive = isatty(STDIN_FILENO); /*verifie si entrée interactive*/
-char *cmd_argv[100];
-int i = 0;
-char *token;
+    char *line = NULL; /* Pointeur pour stocker l'entrée utilisateur */
+    size_t len = 0;    /* Taille de la mémoire allouée à line */
+    ssize_t nread;     /* Nombre de caractères lus */
+    int is_interactive = isatty(STDIN_FILENO); /* Vérifie si entrée interactive */
+    char *cmd_argv[100];
+    int i;
+    char *token;
 
-(void)argc; /*argc n'est pas utilisé donc on le mute*/
+    (void)argc; /* argc n'est pas utilisé, donc on le mute */
 
-while (1) /*boucle infinie pour garder le shell actif*/
-	{
-	if (is_interactive)
-		display_prompt(); /*affiche le prompt seulement en mode interactif*/
-	nread = getline(&line, &len, stdin); /*lit l'entrée utilisateur*/
+    while (1) /* Boucle infinie pour garder le shell actif */
+    {
+        if (is_interactive)
+            display_prompt(); /* Affiche le prompt seulement en mode interactif */
 
-	if (nread == -1) /*verifie si EOF ou erreur*/
-		{
-		if (is_interactive)
-			printf("\n"); /*affiche une nouvelle ligne avant de quitter*/
-		break;
-		}
+        nread = getline(&line, &len, stdin); /* Lit l'entrée utilisateur */
+        if (nread == -1) /* Vérifie si EOF ou erreur */
+        {
+            if (is_interactive)
+                printf("\n"); /* Affiche une nouvelle ligne avant de quitter */
+            break;
+        }
 
-	line[nread - 1] = '\0'; /*supprime le \n en fin de commande*/
+        line[nread - 1] = '\0'; /* Supprime le \n en fin de commande */
 
-	token = strtok(line, " ");
-	while (token != NULL)
-		{
-		cmd_argv[i++] = token;
-		token = strtok(NULL, " ");
-		}
-	cmd_argv[i] = NULL; /*terminer le tableau avec NULL*/
+        i = 0;
+        token = strtok(line, " ");
+        while (token != NULL)
+        {
+            cmd_argv[i++] = token;
+            token = strtok(NULL, " ");
+        }
+        cmd_argv[i] = NULL; /* Termine le tableau avec NULL */
 
-	if (cmd_argv[0] == NULL) /*si aucune commande continuer*/
-		continue;
+        if (cmd_argv[0] == NULL) /* Si aucune commande, continuer */
+            continue;
 
-	if (handle_exit(cmd_argv, argv) != -1)
-		break;
+        if (strcmp(cmd_argv[0], "env") == 0) /* Vérifie si commande est 'env' */
+        {
+            handle_env();
+            continue; /* Retourne à la boucle principale */
+        }
 
-	execute_command(cmd_argv, argv);
-	}
-free(line);
-return (0);
+        if (handle_exit(cmd_argv, argv) != -1) /* Gère la commande exit */
+            break;
+
+        execute_command(cmd_argv, argv); /* Exécute la commande */
+    }
+
+    free(line); /* Libère la mémoire allouée à line */
+    return (0);
 }
 
 /**
-* handle_exit - gere la commande exit
-* @cmd_argv: array d'args
-* @argv: vecteur d'arg du main
-* Return: -1 if exit is not found or exit code
-*/
+ * handle_env - Affiche les variables d'environnement
+ */
+void handle_env(void)
+{
+    char **env = environ;
 
+    while (*env)
+    {
+        printf("%s\n", *env);
+        env++;
+    }
+}
+
+/**
+ * handle_exit - Gère la commande exit
+ * @cmd_argv: array d'arguments
+ * @argv: vecteur d'arguments du main
+ * Return: -1 si exit n'est pas trouvé ou code de sortie
+ */
 int handle_exit(char **cmd_argv, char **argv)
 {
-int exit_code;
+    int exit_code;
 
-	if (strcmp(cmd_argv[0], "exit") != 0) /*verifie si cmd is exit*/
-		return (-1);
+    if (strcmp(cmd_argv[0], "exit") != 0) /* Vérifie si cmd est exit */
+        return (-1);
 
-	if (cmd_argv[1]) /*si code d'etat fourni*/
-		{
-		exit_code = parse_exit_code(cmd_argv[1], argv);
-		if (exit_code == -1) /*erreur de parsing*/
-			return (2); /*code erreur pour arg invalide*/
-		if (cmd_argv[2]) /*si trop d'args*/
-			{
-			fprintf(stderr, "%s: exit: too many arguments\n",argv[0]);
-			return (-1); /*ne pas quitter*/
-			}
-		}
-	else
-		exit_code = 0;
-	exit(exit_code);
+    if (cmd_argv[1]) /* Si code d'état fourni */
+    {
+        exit_code = parse_exit_code(cmd_argv[1], argv);
+        if (exit_code == -1) /* Erreur de parsing */
+            return (2); /* Code erreur pour argument invalide */
+        if (cmd_argv[2]) /* Si trop d'arguments */
+        {
+            fprintf(stderr, "%s: exit: too many arguments\n", argv[0]);
+            return (-1); /* Ne pas quitter */
+        }
+    }
+    else
+        exit_code = 0;
+
+    exit(exit_code); /* Quitte avec le code de sortie */
 }
 
 /**
-* parse_exit_code - parses the exit code arg
-* @arg: argument to parse
-* @argv: vecteur d'arg du main
-* Return: parsed exit code, or -1 if invalid
-*/
-
+ * parse_exit_code - Parse l'argument du code de sortie
+ * @arg: argument à analyser
+ * @argv: vecteur d'arguments du main
+ * Return: code de sortie analysé, ou -1 si invalide
+ */
 int parse_exit_code(const char *arg, char **argv)
 {
-int exit_code = 0;
-int i;
+    int exit_code = 0;
+    int i;
 
-for (i = 0; arg[i] != '\0'; i++)
-	{
-	if (arg[i] < '0' || arg[i] > '9')
-		{
-		fprintf(stderr, "%s: exit: %s: numeric arg required\n", argv[0], arg);
-		return (-1);
-		}
-	exit_code = exit_code * 10 + (arg[i] - '0');
-	}
-return (exit_code);
+    for (i = 0; arg[i] != '\0'; i++)
+    {
+        if (arg[i] < '0' || arg[i] > '9')
+        {
+            fprintf(stderr, "%s: exit: %s: numeric arg required\n", argv[0], arg);
+            return (-1);
+        }
+        exit_code = exit_code * 10 + (arg[i] - '0');
+    }
+    return (exit_code);
 }
 
 /**
-* display_prompt - affiche le shell prompt
-*/
-
+ * display_prompt - Affiche le shell prompt
+ */
 void display_prompt(void)
 {
-printf("($) ");
-fflush(stdout); /*assure que le prompt est affiché immedatemment*/
+    printf("($) ");
+    fflush(stdout); /* Assure que le prompt est affiché immédiatement */
 }
