@@ -117,5 +117,5 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 
 ### Authors
 
-Aurèle Perillat
-Joséphine Pierre
+Aurèle Perillat  
+Joséphine Pierre  
