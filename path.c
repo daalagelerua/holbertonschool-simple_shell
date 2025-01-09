@@ -12,7 +12,7 @@ char *path, *dir, *full_path;
 size_t command_len;
 path = getenv("PATH");
 
-if (!path || *path == '\0') /*si path n'existe pas ou est NULL*/
+if (!path) /*si path n'existe pas ou est NULL*/
 	return (NULL);
 command_len = strlen(command); /*stocke la longueur du nom de la cmd*/
 path = strdup(path); /*duplique path car strtok va modifier la chaine*/
