@@ -1,13 +1,13 @@
 # holbertonschool-simple_shell
 
-#Project Objective
+## Project Objective
 The goal of this project is to create a simple UNIX command interpreter (shell).
 
-#Title
+## Title
 
 C- Simple Shell
 
-#Files Description
+### Files Description
 
 - README.md
 
@@ -43,7 +43,7 @@ It includes the core functionality, such as the input loop, command parsing, and
 The header file for the project.
 It contains function prototypes, macros, and global variable declarations used across multiple source files in the project.
 
-#Requirements:
+### Requirements:
 
 Allowed editors: vi, vim, emacs
 All your files will be compiled on Ubuntu 20.04 LTS using gcc, using the 
@@ -57,7 +57,7 @@ No more than 5 functions per file
 All your header files should be include guarded
 Use system calls only when you need to (why?)
 
-#List of allowed functions and system calls+:
+### List of allowed functions and system calls+:
 
 all functions from string.h
 access (man 2 access)
@@ -97,7 +97,7 @@ wait3 (man 2 wait3)
 wait4 (man 2 wait4)
 write (man 2 write)
 
-#Tasks:
+### Tasks:
 
 0 - README.md, man, authors.
 1 - Betty style.
@@ -107,7 +107,7 @@ write (man 2 write)
 5 - Simple shell 0.4 - implement exit built-in.
 6 - Simple shell 0.5 - implement the end built-in.
 
-#Compilation:
+### Compilation:
 
 Your shell will be compiled this way:
 
