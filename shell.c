@@ -29,7 +29,7 @@ while (1) /* Boucle infinie pour garder le shell actif */
 	line[nread - 1] = '\0'; /* Supprime le \n en fin de commande */
 	if (strcmp(line, "exit") == 0) /* Vérifie si la commande est 'exit' */
 		{
-		handle_exit();
+		handle_exit(line);
 		}
 	token = strtok(line, " ");
 	while (token != NULL)
@@ -67,12 +67,14 @@ while (*env)
 }
 
 /**
-* handle_exit - Gère la commande "exit"
+* handle_exit - Gere la commande exit
+* @line: ligne dentree utilisateur
 */
 
-void handle_exit(void)
+void handle_exit(char *line)
 {
-	exit(0);    /* Quitte avec un code de sortie de 0 */
+    free(line); /* Libère la mémoire allouée */
+    exit(0);    /* Quitte le programme avec un code de succès */
 }
 
 /**
