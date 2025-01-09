@@ -59,7 +59,7 @@ Use system calls only when you need to (why?)
 
 ### List of allowed functions and system calls+:
 
-all functions from string.h
+all functions from string.h  
 access (man 2 access)
 chdir (man 2 chdir)
 close (man 2 close)
