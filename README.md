@@ -9,36 +9,36 @@ C- Simple Shell
 
 ### Files Description
 
-- README.md
+- `README.md`
 
 Contains a detailed description of the project, including its purpose, functionality, usage instructions, and any specific features or limitations.
 
-- exec.c
+- `exec.c`
 
 This file contains the implementation of the execution function.
 The function is responsible for executing user-entered commands by using system calls like execve().
 
-- path.c
+- `path.c`
 
 This file contains the implementation of the path resolution function.
 It handles locating executable files by searching through directories specified in the PATH environment variable.
 
-- man_1_simple_shell
+- `man_1_simple_shell`
 
 The manual page for the project, written in a format compatible with the UNIX man command.
 Provides detailed documentation on how to use the shell, including available commands and options.
 
-- authors
+- `AUTHORS`
 
 A file listing the authors or contributors to the project.
 It typically contains names, email addresses, or other relevant contact information.
 
-- shell.c
+- `shell.c`
 
 This file contains the main code for the shell program.
 It includes the core functionality, such as the input loop, command parsing, and invocation of the execution or path functions.
 
-- shell.h
+- `shell.h`
 
 The header file for the project.
 It contains function prototypes, macros, and global variable declarations used across multiple source files in the project.
@@ -111,4 +111,6 @@ write (man 2 write)
 
 Your shell will be compiled this way:
 
+```bash
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+```
