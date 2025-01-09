@@ -12,30 +12,30 @@ char *path, *dir, *full_path;
 size_t command_len;
 path = getenv("PATH");
 
-if (!path) /*si path n'existe pas ou est NULL*/
-	return (NULL);
-command_len = strlen(command); /*stocke la longueur du nom de la cmd*/
-path = strdup(path); /*duplique path car strtok va modifier la chaine*/
 if (!path)
 	return (NULL);
-dir = strtok(path, ":"); /*decoupage des repertoires*/
-while (dir) /*parcourt chaque repertoire*/
-	{ /*longueur repertoire + longueur commande*/
+command_len = strlen(command);
+path = strdup(path);
+if (!path)
+	return (NULL);
+dir = strtok(path, ":");
+while (dir)
+	{
 	full_path = malloc(strlen(dir) + command_len + 2);
-	if (!full_path)  /* +2 pour '/' entre rep et cmd et '\0'*/
+	if (!full_path)
 		{
 		free(path);
 		return (NULL);
 		}
 	sprintf(full_path, "%s/%s", dir, command);
-	if (access(full_path, X_OK) == 0) /*full_path existe et est executable*/
+	if (access(full_path, X_OK) == 0)
 		{
 		free(path);
 		return (full_path);
 		}
-	free(full_path); /*si access echoue ->free*/
-	dir = strtok(NULL, ":"); /*passe au prochain rep*/
+	free(full_path);
+	dir = strtok(NULL, ":");
 	}
-free(path); /*si aucun rep ne contient cmd ->free*/
+free(path);
 return (NULL);
 }
