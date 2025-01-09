@@ -1,21 +1,26 @@
-
 #include "shell.h"
+
 /**
 * find_command_path - finds the full path of a command
 * @command: command to search for
 * Return: full path to the command
 */
+
 char *find_command_path(char *command)
 {
 char *path, *dir, *full_path;
 size_t command_len;
 path = getenv("PATH");
+
 if (!path)
 	return (NULL);
+
 command_len = strlen(command);
 path = strdup(path);
+
 if (!path)
 	return (NULL);
+
 dir = strtok(path, ":");
 while (dir)
 	{
