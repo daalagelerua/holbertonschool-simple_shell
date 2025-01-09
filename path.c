@@ -21,9 +21,8 @@ if (!path)
 dir = strtok(path, ":"); /*decoupage des repertoires*/
 while (dir) /*parcourt chaque repertoire*/
 	{ /*longueur repertoire + longueur commande*/
-		/* +2 pour '/' entre rep et cmd et '\0'*/
 	full_path = malloc(strlen(dir) + command_len + 2);
-	if (!full_path)
+	if (!full_path)  /* +2 pour '/' entre rep et cmd et '\0'*/
 		{
 		free(path);
 		return (NULL);
