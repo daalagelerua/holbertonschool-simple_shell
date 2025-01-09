@@ -1,13 +1,4 @@
 #include "shell.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
-
-extern char **environ; /* Accès aux variables d'environnement */
-void handle_env(void);
-void handle_exit(void);
 
 /**
 * main - boucle principale et affichage du prompt
@@ -15,75 +6,73 @@ void handle_exit(void);
 * @argv: vecteur d'arguments (contient nom du programme ou arguments)
 * Return: 0
 */
+
 int main(int argc __attribute__((unused)), char **argv)
 {
-	char *line = NULL; /* Pointeur pour stocker l'entrée utilisateur */
-	size_t len = 0;    /* Taille de la mémoire allouée à line */
-	ssize_t nread;     /* Nombre de caractères lus */
-	int is_interactive = isatty(STDIN_FILENO); /* Vérifie si entrée interactive */
-	char *cmd_argv[100];
-	int i;
-	char *token;
+char *line = NULL; /* Pointeur pour stocker l'entrée utilisateur */
+size_t len = 0;    /* Taille de la mémoire allouée à line */
+ssize_t nread;     /* Nombre de caractères lus */
+int i = 0, is_interactive = isatty(STDIN_FILENO); /*Vérif entrée interact*/
+char *token, *cmd_argv[100];
 
-	while (1) /* Boucle infinie pour garder le shell actif */
+while (1) /* Boucle infinie pour garder le shell actif */
 	{
-		if (is_interactive)
-		display_prompt(); /* Affiche le prompt seulement en mode interactif */
-		nread = getline(&line, &len, stdin); /* Lit l'entrée utilisateur */
-		if (nread == -1) /* Vérifie si EOF ou erreur */
-	{
+	if (is_interactive)
+	display_prompt(); /* Affiche le prompt seulement en mode interactif */
+	nread = getline(&line, &len, stdin); /* Lit l'entrée utilisateur */
+	if (nread == -1) /* Vérifie si EOF ou erreur */
+		{
 		if (is_interactive)
 		printf("\n"); /* Affiche une nouvelle ligne avant de quitter */
 		break;
-	}
-		line[nread - 1] = '\0'; /* Supprime le \n en fin de commande */
-
-		if (strcmp(line, "exit") == 0) /* Vérifie si la commande est 'exit' */
-	{
+		}
+	line[nread - 1] = '\0'; /* Supprime le \n en fin de commande */
+	if (strcmp(line, "exit") == 0) /* Vérifie si la commande est 'exit' */
+		{
 		handle_exit();
-	}
-		i = 0;
-		token = strtok(line, " ");
-		while (token != NULL)
-	{
+		}
+	token = strtok(line, " ");
+	while (token != NULL)
+		{
 		cmd_argv[i++] = token;
 		token = strtok(NULL, " ");
-	}
-		cmd_argv[i] = NULL; /* Termine le tableau avec NULL */
-		if (cmd_argv[0] == NULL) /* Si aucune commande, continuer */
+		}
+	cmd_argv[i] = NULL; /* Termine le tableau avec NULL */
+	if (cmd_argv[0] == NULL) /* Si aucune commande, continuer */
 		continue;
-		if (strcmp(cmd_argv[0], "env") == 0) /* Vérifie si commande est 'env' */
-	{
+	if (strcmp(cmd_argv[0], "env") == 0) /* Vérifie si commande est 'env' */
+		{
 		handle_env();
 		continue; /* Retourne à la boucle principale */
-        }
-		execute_command(cmd_argv, argv[0]); /* Exécute la commande */
+		}
+	execute_command(cmd_argv, argv[0]); /* Exécute la commande */
 	}
-
-		free(line); /* Libère la mémoire allouée à line */
-		return (0);
-	}
+free(line); /* Libère la mémoire allouée à line */
+return (0);
+}
 
 /**
  * handle_env - Affiche les variables d'environnement
  */
+
 void handle_env(void)
 {
-    char **env = environ;
+char **env = environ;
 
-    while (*env)
-    {
-        printf("%s\n", *env);
-        env++;
-    }
+while (*env)
+	{
+	printf("%s\n", *env);
+	env++;
+	}
 }
 
 /**
- * handle_exit - Gère la commande "exit"
- */
+* handle_exit - Gère la commande "exit"
+*/
+
 void handle_exit(void)
 {
-    exit(0);    /* Quitte avec un code de sortie de 0 */
+	exit(0);    /* Quitte avec un code de sortie de 0 */
 }
 
 /**
@@ -92,6 +81,6 @@ void handle_exit(void)
 
 void display_prompt(void)
 {
-    printf("($) ");
-    fflush(stdout); /* Assure que le prompt est affiché immédiatement */
+	printf("($) ");
+	fflush(stdout); /* Assure que le prompt est affiché immédiatement */
 }
