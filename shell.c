@@ -7,7 +7,7 @@
 
 extern char **environ; /* Accès aux variables d'environnement */
 void handle_env(void);
-void handle_exit(char **cmd_argv);
+void handle_exit(void);
 
 /**
 * main - boucle principale et affichage du prompt
@@ -15,7 +15,7 @@ void handle_exit(char **cmd_argv);
 * @argv: vecteur d'arguments (contient nom du programme ou arguments)
 * Return: 0
 */
-int main(int argc, char **argv)
+int main(int argc __attribute__((unused)), char **argv)
 {
 	char *line = NULL; /* Pointeur pour stocker l'entrée utilisateur */
 	size_t len = 0;    /* Taille de la mémoire allouée à line */
@@ -24,8 +24,6 @@ int main(int argc, char **argv)
 	char *cmd_argv[100];
 	int i;
 	char *token;
-
-	(void)argc; /* argc n'est pas utilisé, donc on le mute */
 
 	while (1) /* Boucle infinie pour garder le shell actif */
 	{
@@ -39,10 +37,10 @@ int main(int argc, char **argv)
 		break;
 	}
 		line[nread - 1] = '\0'; /* Supprime le \n en fin de commande */
-		if (strcmp(cmd_argv[0], "exit") == 0) /* Vérifie si commande est 'exit' */
+
+		if (strcmp(line, "exit") == 0) /* Vérifie si la commande est 'exit' */
 	{
-		handle_exit(cmd_argv); /* Appel de la fonction exit */
-		break;
+		handle_exit();
 	}
 		i = 0;
 		token = strtok(line, " ");
@@ -59,7 +57,7 @@ int main(int argc, char **argv)
 		handle_env();
 		continue; /* Retourne à la boucle principale */
         }
-		execute_command(cmd_argv, argv); /* Exécute la commande */
+		execute_command(cmd_argv, argv[0]); /* Exécute la commande */
 	}
 
 		free(line); /* Libère la mémoire allouée à line */
@@ -80,22 +78,14 @@ void handle_env(void)
     }
 }
 
-void handle_exit(char **cmd_argv) {
-    int exit_code = 0;
-int i;
-
-    if (cmd_argv[1]) {
-        for (i = 0; cmd_argv[1][i] != '\0'; i++) {
-            if (cmd_argv[1][i] < '0' || cmd_argv[1][i] > '9') {
-                fprintf(stderr, "exit: %s: numeric argument required\n", cmd_argv[1]);
-                return;
-            }
-        }
-        exit_code = atoi(cmd_argv[1]);
-    }
-
-    exit(exit_code);
+/**
+ * handle_exit - Gère la commande "exit"
+ */
+void handle_exit(void)
+{
+    exit(0);    /* Quitte avec un code de sortie de 0 */
 }
+
 /**
 * display_prompt - affiche le shell prompt
 */
