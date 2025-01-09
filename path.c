@@ -9,7 +9,7 @@
 char *find_command_path(char *command)
 {
 char *path, *dir, *full_path;
-size_t command_len, buf_siz;
+size_t command_len;
 path = getenv("PATH");
 
 if (!path || *path == '\0') /*si path n'existe pas ou est NULL*/
@@ -22,20 +22,13 @@ dir = strtok(path, ":"); /*decoupage des repertoires*/
 while (dir) /*parcourt chaque repertoire*/
 	{ /*longueur repertoire + longueur commande*/
 		/* +2 pour '/' entre rep et cmd et '\0'*/
-	buf_siz = strlen(dir) + command_len + 2;
-	full_path = malloc(buf_siz);
+	full_path = malloc(strlen(dir) + command_len + 2);
 	if (!full_path)
 		{
 		free(path);
 		return (NULL);
 		}
-	if ((snprintf(full_path, buf_siz, "%s/%s", dir, command)) >= (int)buf_siz)
-		{
-		fprintf(stderr, "error: buffer size insufficient for cmd path\n");
-		free(full_path);
-		free(path);
-		return (NULL);
-		}
+	sprintf(full_path, "%s/%s", dir, command);
 	if (access(full_path, X_OK) == 0) /*full_path existe et est executable*/
 		{
 		free(path);
