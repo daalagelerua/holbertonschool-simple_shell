@@ -8,6 +8,8 @@
 
 void execute_command(char **cmd_argv, char *argv)
 {
+char *cmd_path;
+
 pid_t pid = fork();
 	if (pid == -1)
 	{
@@ -17,7 +19,13 @@ pid_t pid = fork();
 
 	if (pid == 0)
 		{
-		if (execvp(cmd_argv[0], cmd_argv) == -1)
+		cmd_path = find_command_path(argv);
+		if (cmd_path == NULL)
+			{
+			perror("command not found");
+			exit(EXIT_FAILURE);
+			}
+		if (execve(cmd_path, cmd_argv, environ) == -1)
 			{
 			perror(argv);
 			}
