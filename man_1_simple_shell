@@ -1,40 +1,57 @@
-.TH SIMPLE-SHELL 1 "January 2025" "1.0" "Manual page for HSH (Holberton Simple Shell)"
+.TH HOLBERTON_SIMPLE_SHELL 1 "January 2025" "1.0" "Manual page for Holberton Simple Shell"
 .SH NAME
-hsh \- a simple Unix command-line interpreter
+holberton_simple_shell \- a simple Unix command-line interpreter
 .SH SYNOPSIS
-.B hsh
+.B holberton_simple_shell
 [\fIoptions\fR]
 .SH DESCRIPTION
-.B hsh
-is an interactive and non-interactive shell developed by Aurèle et Joséphine.  
-It allows users to execute system commands by reading user input, parsing the commands, and running them in child processes.
+.B holberton_simple_shell
+is an interactive and non-interactive shell developed by Aurèle and Joséphine.
+.br  
+It allows users to execute system commands by reading user input,
+.br
+parsing the commands, and running them in child processes.
 
-The shell operates in two modes:  
-- **Interactive mode**: Displays a prompt and waits for user input.  
+The shell operates in two modes:
+.br  
+- **Interactive mode**: Displays a prompt and waits for user input.
+.br  
 - **Non-interactive mode**: Reads and executes commands from a file or a pipeline.
 
-This shell was implemented as part of the Holberton School curriculum to learn the fundamentals of system calls and process management.
+This shell was implemented as part of the Holberton School curriculum
+.br
+to learn the fundamentals of system calls and process management.
 
 .SH COMMANDS
 .TP
 .B exit
+.br
 Exit the shell.  
+.br
 Usage:  
 .B exit  
 This command terminates the shell.
 .TP
 .B env
-Print the current environment variables.  
+.br
+Print the current environment variables.
+.br  
 Usage:  
 .B env
 .TP
 .B cd [directory]
-Change the current working directory to \fIdirectory\fR. If no directory is provided, the shell defaults to the user's home directory.  
+.br
+Change the current working directory to \fIdirectory\fR.
+.br
+If no directory is provided, the shell defaults to the user's home directory.
+.br  
 Usage:  
 .B cd /path/to/directory
 .TP
 .B help
-Display a list of built-in commands and their usage.  
+.br
+Display a list of built-in commands and their usage. 
+.br 
 Usage:  
 .B help
 
@@ -53,50 +70,67 @@ Exit the shell:
 .B exit
 .PP
 Terminate with \fICTRL+D\fR:
-.B ^D
+.B 
 
 .SH PATH
-The shell uses the \fIPATH\fR environment variable to locate executables. When a command is typed, the shell searches the directories in \fIPATH\fR for the corresponding binary. If the binary is not found, an error message is displayed.
+The shell uses the \fIPATH\fR environment variable to locate executables.
+.br
+When a command is typed, the shell searches the directories in \fIPATH\fR
+.br
+for the corresponding binary.
+.br
+If the binary is not found, an error message is displayed.
 
 .SH SYSTEM CALLS
 The following system calls are used in \fBhsh\fR:
 .TP
 .B fork
+.br
 Creates a new process.
 .TP
 .B execve
+.br
 Replaces the current process with a new program.
 .TP
 .B wait
+.br
 Suspends the parent process until a child process terminates.
 .TP
 .B getpid
+.br
 Retrieves the process ID of the current process.
 .TP
 .B getppid
+.br
 Retrieves the parent process ID.
 
 .SH ENVIRONMENT
 The shell can manipulate environment variables using:
 .TP
 .B getenv
+.br
 Retrieve the value of an environment variable.
 .TP
 .B setenv
+.br
 Set or update an environment variable.
 .TP
 .B unsetenv
+.br
 Remove an environment variable.
 
 .SH FILES
 .TP
 .B AUTHORS
+.br
 Contains the list of contributors to the project: Joséphine and Aurele.
 .TP
 .B README.md
+.br
 Overview and usage instructions for the shell.
 .TP
 .B man_1_simple_shell
+.br
 This manual page.
 
 .SH COPYRIGHT
