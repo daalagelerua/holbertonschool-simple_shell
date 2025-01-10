@@ -38,7 +38,8 @@ while (1) /* Boucle infinie pour garder le shell actif */
 		token = strtok(NULL, " ");
 		}
 	cmd_argv[i] = NULL; /* Termine le tableau avec NULL */
-	if (cmd_argv[0] == NULL) /* Si aucune commande, continuer */
+	i = 0;
+if (cmd_argv[0] == NULL) /* Si aucune commande, continuer */
 		continue;
 	if (strcmp(cmd_argv[0], "env") == 0) /* Vérifie si commande est 'env' */
 		{

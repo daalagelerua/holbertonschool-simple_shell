@@ -6,6 +6,9 @@
 * Return: full path to the command
 */
 
+/* Macro pour le chemin par défaut */
+#define PATH1 "/usr/local/bin:/usr/bin:/bin:/custom/path"
+
 char *find_command_path(char *command)
 {
 char *path, *dir, *full_path;
