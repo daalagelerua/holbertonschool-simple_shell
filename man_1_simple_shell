@@ -143,5 +143,5 @@ Copyright (C) 2025 Aurele and Joséphine. All rights reserved.
 .BR fork (2),
 .BR wait (2)
 
-.SH AUTHOR
+.SH AUTHORS
 Written by Aurele and Josephine.
