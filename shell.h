@@ -13,9 +13,10 @@
 extern char **environ;
 
 void display_prompt(void);
-void execute_command(char **cmd_argv, char *argv);
+void execute_command(char **cmd_argv, char *command_path);
 char *find_command_path(char *command);
 void handle_env(void);
 void handle_exit(char *line);
+int tokenize_input(char *line, char **cmd_argv);
 
 #endif

@@ -3,24 +3,24 @@
 /**
 * execute_command - crée les forks et execute les commandes
 * @cmd_argv: array d'arg
-* @argv: nom programme
+* @command_path: chemin de la commande
 */
 
-void execute_command(char **cmd_argv, char *argv)
+void execute_command(char **cmd_argv, char *command_path)
 {
 pid_t pid = fork();
 int status;
 
 	if (pid == -1)
 	{
-	perror(argv);
+	perror(command_path);
 		return;
 	}
 	else if (pid == 0)
 	{
-		if (execvp(cmd_argv[0], cmd_argv) == -1)
+		if (execve(command_path, cmd_argv, environ) == -1)
 		{
-			perror(argv);
+			perror(command_path);
 			exit(EXIT_FAILURE);
 		}
 	}
