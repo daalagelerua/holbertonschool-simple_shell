@@ -10,8 +10,8 @@
 int main(int argc __attribute__((unused)), char **argv)
 {
 char *line = NULL; /* Pointeur pour stocker l'entrée utilisateur */
-size_t len = 0;    /* Taille de la mémoire allouée à line */
-ssize_t nread;     /* Nombre de caractères lus */
+size_t len = 0; /* Taille de la mémoire allouée à line */
+ssize_t nread; /* Nombre de caractères lus */
 int i = 0, is_interactive = isatty(STDIN_FILENO); /*Vérif entrée interact*/
 char *token, *cmd_argv[100];
 
@@ -31,10 +31,10 @@ while (1) /* Boucle infinie pour garder le shell actif */
 		{
 		handle_exit(line);
 		}
-	token = strtok(line, " ");
+	token = strtok(line, " "); /*decoupe chaine en token a chaque delimiteur*/
 	while (token != NULL)
 		{
-		cmd_argv[i++] = token;
+		cmd_argv[i++] = token; /*ajoute chaque token au tableau cmd_argv*/
 		token = strtok(NULL, " ");
 		}
 	cmd_argv[i] = NULL; /* Termine le tableau avec NULL */
@@ -58,12 +58,13 @@ return (0);
 
 void handle_env(void)
 {
+/*copie du ptr 'environ' pour iterer sur les variables sans modif l'original*/
 char **env = environ;
 
-while (*env)
+while (*env) /*tant que env n'est pas NULL*/
 	{
-	printf("%s\n", *env);
-	env++;
+	printf("%s\n", *env); /*affiche la chaine de caractere pointée*/
+	env++; /*passe a la chaine suivante*/
 	}
 }
 
