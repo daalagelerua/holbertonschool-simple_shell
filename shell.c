@@ -2,15 +2,19 @@
 
 /**
 * main - boucle principale et affichage du prompt
+* @argc: compteur d'arguments (non utilisé ici)
+* @argv: vecteur d'arguments (contient nom du programme ou arguments)
 * Return: 0
 */
 
-int main(void)
+int main(int argc __attribute__((unused)), char **argv)
 {
+char *line = NULL; /* Pointeur pour stocker l'entrée utilisateur */
 size_t len = 0; /* Taille de la mémoire allouée à line */
 ssize_t nread; /* Nombre de caractères lus */
 int i = 0, is_interactive = isatty(STDIN_FILENO); /*Vérif entrée interact*/
-char *command_path, *cmd_argv[100], *line = NULL;
+char *token, *cmd_argv[100];
+
 while (1) /* Boucle infinie pour garder le shell actif */
 	{
 	if (is_interactive)
@@ -27,23 +31,22 @@ while (1) /* Boucle infinie pour garder le shell actif */
 		{
 		handle_exit(line);
 		}
-	i = tokenize_input(line, cmd_argv);
+	token = strtok(line, " "); /*decoupe chaine en token a chaque delimiteur*/
+	while (token != NULL)
+		{
+		cmd_argv[i++] = token; /*ajoute chaque token au tableau cmd_argv*/
+		token = strtok(NULL, " ");
+		}
 	cmd_argv[i] = NULL; /* Termine le tableau avec NULL */
 	i = 0;
-	if (cmd_argv[0] == NULL) /* Si aucune commande, continuer */
+if (cmd_argv[0] == NULL) /* Si aucune commande, continuer */
 		continue;
 	if (strcmp(cmd_argv[0], "env") == 0) /* Vérifie si commande est 'env' */
 		{
 		handle_env();
 		continue; /* Retourne à la boucle principale */
 		}
-	command_path = find_command_path(cmd_argv[0]);
-	if (command_path == NULL)
-		{
-		fprintf(stderr, "command not found: %s\n", cmd_argv[0]);
-		continue;
-		}
-	execute_command(cmd_argv, command_path); /* Exécute la commande */
+	execute_command(cmd_argv, argv[0]); /* Exécute la commande */
 	}
 free(line); /* Libère la mémoire allouée à line */
 return (0);
@@ -72,8 +75,8 @@ while (*env) /*tant que env n'est pas NULL*/
 
 void handle_exit(char *line)
 {
-	free(line); /* Libère la mémoire allouée */
-	exit(0);    /* Quitte le programme avec un code de succès */
+    free(line); /* Libère la mémoire allouée */
+    exit(0);    /* Quitte le programme avec un code de succès */
 }
 
 /**
