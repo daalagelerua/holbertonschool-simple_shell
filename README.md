@@ -119,3 +119,9 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 
 Aurèle Perillat  
 Joséphine Pierre  
+
+### Flowchart
+
+Here is a diagram which explains how the project works :
+
+![Flowchart du projet](./docs/flowchart_simple_shell.jpg)
